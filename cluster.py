@@ -37,7 +37,7 @@ class Cluster:
 
 
     def clusterByDistance(self):
-        threshold = 0.3
+        threshold = 0.15
         clusters = [] # store the list of clusters from dataset
         centroid = [] # store the centroids 
         diff_p = 0

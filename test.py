@@ -45,8 +45,8 @@ def live_plotter(X,Y,line1,identifier='',pause_time=0.05):
         ax.spines['right'].set_color('none')
         ax.spines['bottom'].set_position('zero')
         ax.spines['top'].set_color('none')          
-        plt.xlim(-8,8)
-        plt.ylim(-8,8)  
+        plt.xlim(-9.5,9.5)
+        plt.ylim(-9.5,9.5)  
         plt.ylabel('Y Label')
         plt.title('Title: {}'.format(identifier))
     
@@ -68,16 +68,23 @@ def convert(point):
 #     return(rho, phi)
 
 def cart_to_polar(point):
-    rho = math.sqrt( math.pow(point[0],2) + math.pow(point[1],2))
-    phi = math.atan(point[1]/point[0])
-    return [rho,phi]
+    # print("POINT:"+str(point))
+    radius = math.sqrt( math.pow(point[0],2) + math.pow(point[1],2))
+    radian = math.atan2(point[1],point[0])
+    if radian < 0:
+        angle = 360 + math.degrees(radian)
+    else:
+        angle = math.degrees(radian)
+    return [angle,radius]
 
 tracks = []  # tracked points of an object in cart coordinates
-
+track = []
 if __name__ == "__main__":
     frames = []
     frame = []
     line1 = []
+    lidar_data = []
+    # time.sleep(5)
     try:
         for j,path in enumerate(run("./ultra_simple /dev/ttyUSB0")):
             if keyboard.is_pressed('q'):
@@ -107,25 +114,36 @@ if __name__ == "__main__":
                     reader = csv.reader(f)
                     for row in reader:
                         if float(row[1])/1000 != 0:
-                            frame.append([float(row[0]),float(row[1])/1000])
+                            frame.append([float(row[0]),float(row[1])/1000])                        
 
-                # frame.append([float(text[0]),float(text[1])/1000])
                 if len(frame) > 1:
                     if frame[-2][0] > frame[-1][0]:
                         # print("FRAME")
                         # print(frame)
+                        
+                        # lidar_data = []
+                        # if track:
+                        #     track_polar = cart_to_polar(tracks[-1])
+                        #     for p in frame:
+                        #         if p[0] < track_polar[0] + 20 and p[0] > track_polar[0] - 20:
+                        #             lidar_data.append(p)
+                        # else:    
+                        #     lidar_data = frame
                         frames.append(frame)
+
+
 
                         # clustering 
                         cl = Cluster(frame)
-                        threshold = 0.3
+                        # threshold = 0.3
                         clusters = cl.clusterByDistance() # polar coordinates  
 
                         #tracking
                         tr = Track(clusters) 
-                        threshold_tr = 0.3
+                        threshold_tr = 0.4
                         track = tr.track(tracks, threshold_tr) # caartesian coordinates
                         if track:
+                            # print("NEAREST OBJECT POLAR:"+str(track_polar))
                             tracks.append(track)
 
                             X_VAL, Y_VAL = [],[]
@@ -136,12 +154,12 @@ if __name__ == "__main__":
                                     # cart = cart_to_polar(p)
                                     X_VAL.append(p[0])
                                     Y_VAL.append(p[1])
-                                time.sleep(0.1)
                                 line1 = live_plotter(X_VAL,Y_VAL,line1)
-                                frame = []
                             except IndexError:
                                 print("p:"+str(p))
                                 print("NO TRACK DETECTED")
+                        frame = []
+
         plt.show()
 
 

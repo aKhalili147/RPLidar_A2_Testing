@@ -36,7 +36,7 @@ class Track:
                 for point in cluster:
                     # print(point[0])
                     rad = math.radians(point[0])
-                    cart_coor.append([abs(point[1])*math.cos(rad),abs(point[1])*math.sin(rad)])
+                    cart_coor.append([abs(point[1])*math.cos(rad),-abs(point[1])*math.sin(rad)])
                 frame_m.append(cart_coor)
                 cart_coor = []
 
@@ -76,27 +76,7 @@ class Track:
                         if abs(math.sqrt( math.pow(obj_track[0],2) + math.pow(obj_track[1],2)) - math.sqrt( math.pow(fm[0],2) + math.pow(fm[1],2)) ) < nt_obj_dist:
                             nt_obj_dist = abs(math.sqrt( math.pow(obj_track[0],2) + math.pow(obj_track[1],2)) - math.sqrt( math.pow(fm[0],2) + math.pow(fm[1],2)) )
                             track = fm 
-
-                # if track:
-                #     # check availability of new point
-                #     if (track[0] > obj_borXn and track[0] < obj_borXp) and  (track[1] > obj_borYn and track[1] < obj_borYp):
-                #         tracks.append(track)
-                #     else: 
-                #         print("ERROR ADDED TO TRACK:"+str(track))
-                #         print("LAST TRACKED POINT: "+str(tracks[-1]))
-                #         print("MEAN VALUES:")
-                #         for i,fm in enumerate(frame1_m):
-                #             print("mean-"+str(i)+": "+str(fm))
-
-                #         if self.clusters:
-                #             for i, cluster in enumerate(self.clusters):
-                #                 print("CLUSTERS-"+str(i)+":")
-                #                 print(cluster)
-                #         else:
-                #             print("NO CLUSTERS DETECTED")
-                #         # tracks.append(track)                
-                # else:
-                #     print("NO POINT DETECTED")
+                            
         else: 
             obj_track = frame1_m[0]
             nt_obj_dist = math.sqrt( pow(obj_track[0], 2) + pow(obj_track[1],2) )
@@ -107,7 +87,7 @@ class Track:
                         nt_obj_dist =math.sqrt( pow(fm[0], 2) + pow(fm[1], 2) )
                         # print("after:  "+str(nt_obj_dist))
                         track = fm
-        print("NEAREST OBJECT: "+str(obj_track))
+        # print("NEAREST OBJECT: "+str(obj_track))
 
         return track 
 
