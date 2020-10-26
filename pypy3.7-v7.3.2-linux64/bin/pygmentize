@@ -1,8 +1,0 @@
-#!/home/test/Desktop/SIGMACIS/week2/rplidar_sdk-release-v1.11.0/sdk/output/Linux/Release/TEST/pypy3.7-v7.3.2-linux64/bin/pypy
-# -*- coding: utf-8 -*-
-import re
-import sys
-from pygments.cmdline import main
-if __name__ == '__main__':
-    sys.argv[0] = re.sub(r'(-script\.pyw|\.exe)?$', '', sys.argv[0])
-    sys.exit(main())
