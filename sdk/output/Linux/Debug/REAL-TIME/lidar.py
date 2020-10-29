@@ -1,3 +1,5 @@
+# using PyQt --> visualization of software
+
 from pyqtgraph.Qt import QtGui, QtCore
 import pyqtgraph as pg
 from subprocess import Popen, PIPE
