@@ -11,8 +11,6 @@ from cluster import Cluster
 import keyboard
 import sys
 
-PORT_NAME = "/dev/ttyUSB0"
-COMMAND = "./ultra_simple /dev/ttyUSB0"
 
 def run(command):
     process = Popen(command, stdout=PIPE, shell=True)
@@ -31,10 +29,6 @@ def live_plotter(X,Y,line1,identifier='',pause_time=0.05):
     if line1==[]:
         # this is the call to matplotlib that allows dynamic plotting
         plt.ion()
-        # create a variable for the line so we can later update it
-        # line1, = ax.plot(X,Y)        
-        #update plot label/title
-        # plt.scatter(X,Y)
         ax.grid(True)
         for i in range(len(X)-1):
             if i == 0:
@@ -54,9 +48,6 @@ def live_plotter(X,Y,line1,identifier='',pause_time=0.05):
         plt.ylabel('Y Label')
         plt.title('Title: {}'.format(identifier))
     
-    # after the figure, axis, and line are created, we only need to update the y-data
-    # line1.set_data(x_vec,y1_data)
-    # this pauses the data so the figure/axis can catch up - the amount of pause can be altered above
     plt.pause(pause_time)
     
     # return line so we can update it again in the next iteration
@@ -65,11 +56,6 @@ def live_plotter(X,Y,line1,identifier='',pause_time=0.05):
 def convert(point):
     rad = math.radians(point[0])
     return [abs(point[1])*math.cos(rad),abs(point[1])*math.sin(rad)]
-
-# def cart2pol(x, y):
-#     rho = np.sqrt(x**2 + y**2)
-#     phi = np.arctan2(y, x)
-#     return(rho, phi)
 
 def cart_to_polar(point):
     # print("POINT:"+str(point))
@@ -81,15 +67,15 @@ def cart_to_polar(point):
         angle = math.degrees(radian)
     return [angle,radius]
 
-tracks = []  # tracked points of an object in cart coordinates
-track = []
 
 if __name__ == "__main__":
+    PORT_NAME = "/dev/ttyUSB0"
+    COMMAND = "./ultra_simple /dev/ttyUSB0"
+    tracks = []  # tracked points of an object in cart coordinates
+    track = []
     frames = []
     frame = []
     line1 = []
-    lidar_data = []
-    # time.sleep(5)
     try:
         for j,path in enumerate(run(COMMAND)):
             if keyboard.is_pressed('q'):
