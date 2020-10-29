@@ -35,7 +35,7 @@ class Cluster:
         return cart_coor
 
 
-
+    # distance-based clustering
     def clusterByDistance(self):
         threshold = 0.15
         clusters = [] # store the list of clusters from dataset
@@ -51,10 +51,8 @@ class Cluster:
                 clusters.append(centroid)
                 centroid = []
 
-
         clusters = [cluster for cluster in clusters if cluster != [] and len(cluster) > 2]
 
-        # pprint(clusters)
         return clusters
 
 
