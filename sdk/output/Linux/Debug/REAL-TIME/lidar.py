@@ -11,10 +11,10 @@ from cluster import Cluster
 
 app = QtGui.QApplication([])
 win = pg.GraphicsWindow(title="Test")
-win.resize(1000,1000)
+win.resize(500,500)
 win.setWindowTitle('2-D Lidar Object Tracking')
 win.setBackground('w')
-p1 = win.addPlot(title="Nearest object tracking")
+p1 = win.addPlot(title="Nearest object")
 p2 = win.addPlot(title="System")
 p1.showGrid(x=True, y=True)
 p2.showGrid(x=True, y=True)
@@ -67,33 +67,37 @@ def test():
                         clusters = cl.clusterByDistance() # polar coordinates  
                         # print("CLUSTERING:    --- %s seconds ---" % (time.time() - start_time))
 
-                        #tracking
-                        tr = Track(clusters) 
-                        threshold_tr = 0.4
-                        track = tr.track(TRACKS, threshold_tr) # caartesian coordinates
-                        # print("TRACKING:      --- %s seconds ---" % (time.time() - start_time))
+                        if clusters:
+                            #tracking
+                            tr = Track(clusters) 
+                            threshold_tr = 0.2
+                            track = tr.track(TRACKS, threshold_tr) # caartesian coordinates
+                            # print("TRACKING:      --- %s seconds ---" % (time.time() - start_time))
 
-                        if track:
-                            # print("NEAREST OBJECT POLAR:"+str(track_polar))
-                            TRACKS.append(track)                            
+                            if track:
+                                # print("NEAREST OBJECT POLAR:"+str(track_polar))
+                                TRACKS.append(track)                            
 
-                            try:
-                                frame_cart = convert(frame)
-                                X = [p[0] for p in frame_cart]
-                                Y = [p[1] for p in frame_cart]
-                                curve2.setData(X,Y)
+                                try:
+                                    frame_cart = convert(frame)
+                                    X = [p[0] for p in frame_cart]
+                                    Y = [p[1] for p in frame_cart]
+                                    curve2.setData(X,Y)
 
-                                # if len(TRACKS) > 30:
-                                #     for i,tr in enumerate(TRACKS[:20]):
-                                #         del TRACKS[i]
-                                X_VAL = [p[0] for p in TRACKS] 
-                                Y_VAL = [p[1] for p in TRACKS]
-                                curve1.setData(X_VAL,Y_VAL)
-                                app.processEvents()
+                                    if len(TRACKS) > 40:
+                                        for i,tr in enumerate(TRACKS[:20]):
+                                            del TRACKS[i]
+                                    X_VAL = [p[0] for p in TRACKS] 
+                                    Y_VAL = [p[1] for p in TRACKS]
+                                    curve1.setData(X_VAL,Y_VAL)
+                                    app.processEvents()
 
-                            except IndexError:
-                                print("NO TRACK DETECTED AT FRAME --> "+str(len(frames)))
-                        frame = []
+                                except IndexError:
+                                    print("NO TRACK DETECTED AT FRAME --> "+str(len(frames)))
+                            frame = []
+                        else:
+                            print("NO CLUSTER DETECTED AT FRAME --> "+str(len(frames)))
+
             else:
                 text = str(path)
                 text = re.sub(r"b'","",text)
@@ -111,4 +115,5 @@ if __name__ == '__main__':
     import sys
     test()
     if (sys.flags.interactive != 1) or not hasattr(QtCore, 'PYQT_VERSION'):
-        QtGui.QApplication.instance().exec_()
+        status = QtGui.QApplication.instance().exec_()
+        sys.exit(status)
