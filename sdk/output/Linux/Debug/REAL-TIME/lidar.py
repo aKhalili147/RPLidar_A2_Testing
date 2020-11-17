@@ -1,5 +1,7 @@
 # using PyQt --> visualization of software
 
+from pyfirmata import Arduino
+import serial
 from pyqtgraph.Qt import QtGui, QtCore
 import pyqtgraph as pg
 from subprocess import Popen, PIPE
@@ -44,13 +46,31 @@ def convert(frame):
         frame_cart.append([abs(point[1])*math.cos(rad),-abs(point[1])*math.sin(rad)])
     return frame_cart
 
+def cartPolar(point):
+    angle = int(math.degrees(math.atan2(point[1],point[0])))
+    if angle < 0:
+        return 360+angle
+    else: 
+        return angle
+
 def test():
+    
+    
+    """ 
+    --> if you have a servo motor and arduino (any type) 
+        --> comment out below code 
+        --> line: 64,65, 107
+    """
+    # board = Arduino("/dev/ttyACM0") # create an object of pyfirmata
+    # servo = board.get_pin('d:3:s') # set pin 3 for servo motor
+    start_time = time.time()
     TRACKS = []  # tracked points of an object in cart coordinates
     frames = [] # store all data for each frame
     frame = [] # store the data coming from one spin --> aprox. 360-500 points
 
     PATH = "mod_data.csv"
     data = Data(PATH)
+    
     try:
         for j,path in enumerate(run("./ultra_simple /dev/ttyUSB0")):
             if j > 5:                
@@ -79,7 +99,13 @@ def test():
                             if track:
                                 # print("NEAREST OBJECT POLAR:"+str(track_polar))
                                 TRACKS.append(track)                            
-
+                                angle = cartPolar(track)
+                                # print("ANGLE: "+str(angle))
+                                delta = time.time() - start_time
+                                if angle < 180 and angle > 0:
+                                    start_time = time.time()
+                                    servo.write(angle)
+                                
                                 try:
                                     frame_cart = convert(frame)
                                     X = [p[0] for p in frame_cart]
